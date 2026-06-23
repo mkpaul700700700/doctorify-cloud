@@ -9,7 +9,7 @@ import NotificationBell from "./NotificationBell"
 export default async function Navbar() {
   const session = await auth()
   
-  let notifications = []
+  let notifications: any[] = []
   let fullUser = null
   if (session?.user?.id) {
     notifications = await prisma.inAppNotification.findMany({

@@ -41,7 +41,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
   // Synchronous Stripe Verification (Fix for local dev without Webhooks)
   if (searchParams?.payment === "success" && searchParams?.session_id) {
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: "2024-11-20.acacia" })
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: "2024-11-20.acacia" as any })
       const checkoutSession = await stripe.checkout.sessions.retrieve(searchParams.session_id)
       
       if (checkoutSession.payment_status === "paid" && checkoutSession.metadata?.appointmentId) {

@@ -16,7 +16,7 @@ export async function scrapeMedicinePrice(medicineName: string): Promise<number 
       const searchHtml = await searchResponse.text();
       const $search = cheerio.load(searchHtml);
       
-      let firstBrandLink = null;
+      let firstBrandLink: string | null = null;
       $search('a').each((i, el) => {
         const href = $search(el).attr('href');
         if (href && href.includes('/brands/') && !firstBrandLink) {
@@ -43,9 +43,9 @@ export async function scrapeMedicinePrice(medicineName: string): Promise<number 
           // MedEx formats prices differently. Sometimes it says "Unit Price: ৳ 1.70"
           // Sometimes for Syrups it says "100 ml bottle: ৳ 45.00"
           
-          const exactPriceMatch = detailHtml.match(/Unit Price:.*?৳\s*([0-9]+\.[0-9]+)/is);
-          const bottlePriceMatch = detailHtml.match(/bottle:.*?৳\s*([0-9]+\.[0-9]+)/is);
-          const injectionPriceMatch = detailHtml.match(/ampoule:.*?৳\s*([0-9]+\.[0-9]+)/is) || detailHtml.match(/vial:.*?৳\s*([0-9]+\.[0-9]+)/is);
+          const exactPriceMatch = detailHtml.match(/Unit Price:[\s\S]*?৳\s*([0-9]+\.[0-9]+)/i);
+          const bottlePriceMatch = detailHtml.match(/bottle:[\s\S]*?৳\s*([0-9]+\.[0-9]+)/i);
+          const injectionPriceMatch = detailHtml.match(/ampoule:[\s\S]*?৳\s*([0-9]+\.[0-9]+)/i) || detailHtml.match(/vial:[\s\S]*?৳\s*([0-9]+\.[0-9]+)/i);
 
           if (exactPriceMatch && exactPriceMatch[1]) {
             return parseFloat(exactPriceMatch[1]);
