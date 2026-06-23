@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  role          String    @default("PATIENT") // PATIENT, DOCTOR, ADMIN
+  isActive      Boolean   @default(true)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  otp           String?
+  otpExpiresAt  DateTime?
+
+  doctorProfile DoctorProfile?
+  medicalRecord MedicalRecord?
+  medicalReports MedicalReport[]
+  
+  appointmentsAsPatient Appointment[] @relation("PatientAppointments")
+  appointmentsAsDoctor  Appointment[] @relation("DoctorAppointments")
+  
+  messagesSent          AppointmentMessage[]
+  notifications         InAppNotification[]
+  
+  doctorSchedules       DoctorSchedule[]
+  specialSchedules      SpecialSchedule[]
+}
+
+model MedicalRecord {
+  id          String   @id @default(cuid())
+  patientId   String   @unique
+  patient     User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  // Personal
+  dob         DateTime?
+  gender      String?
+  phone       String?
+  address     String?
+  
+  // Emergency
+  emergencyName     String?
+  emergencyRelation String?
+  emergencyPhone    String?
+  
+  // Physical
+  bloodGroup  String?
+  rhFactor    String?
+  height      String?
+  weight      String?
+  
+  // Medical Details
+  allergies          String? 
+  conditions         String? 
+  currentMedications String? 
+  pastSurgeries      String? 
+  familyHistory      String?
+  
+  // Lifestyle
+  smokingStatus  String?
+  alcoholStatus  String?
+  exerciseStatus String?
+  
+  // Female Specific
+  isPregnant          Boolean?
+  isBreastfeeding     Boolean?
+  lastMenstrualPeriod DateTime?
+  
+  // Notes
+  patientNotes String?
+
+  updatedAt   DateTime @updatedAt
+}
+
+model MedicalReport {
+  id        String   @id @default(cuid())
+  patientId String
+  patient   User     @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  fileUrl   String
+  fileName  String
+  fileType  String
+  createdAt DateTime @default(now())
+}
+
+
+model Prescription {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  diagnosis     String?
+  tests         String?
+  instructions  String?
+  revisitDays   Int?        // Nullable if no revisit specified
+  items         PrescriptionItem[]
+  totalCost     Float?      @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model PrescriptionItem {
+  id             String       @id @default(cuid())
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicineName   String
+  type           String       @default("Medicine")
+  dosage         String       // e.g. "1-0-1"
+  days           Int
+  unitPrice      Float?
+  totalCost      Float?
+  createdAt      DateTime     @default(now())
+}
+
+model DoctorProfile {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialty       String
+  qualifications  String?
+  bio             String?
+  experience      Int     @default(0) // years
+  consultationFee Float  @default(0.0)
+  clinicAddress  String?
+  availableDays  String  @default("Monday,Tuesday,Wednesday,Thursday,Friday") // simple comma separated
+  workingHours   String  @default("09:00-17:00")
+  isVerified      Boolean  @default(false)
+  signatureUrl    String?
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  patientId String
+  doctorId  String
+  
+  patient   User     @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctor    User     @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  
+  date      DateTime
+  time      String   // HH:MM format
+  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED, AWAITING_PAYMENT, ABANDONED
+  paymentStatus String @default("UNPAID") // UNPAID, PAID, REFUNDED
+  amount    Float?
+  stripeSessionId String?
+  lockedUntil DateTime?
+  reason    String?
+  notes     String?
+  rescheduleCount Int @default(0)
+  refundRequested Boolean @default(false)
+  
+  prescription Prescription?
+  messages     AppointmentMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DoctorSchedule {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    User     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday, etc.
+  startTime String   // e.g. "09:00"
+  endTime   String   // e.g. "17:00"
+  isOffDay  Boolean  @default(false)
+  
+  @@unique([doctorId, dayOfWeek])
+}
+
+model SpecialSchedule {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    User     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      DateTime // specific date (at midnight UTC to represent the day)
+  startTime String   // e.g. "14:00"
+  endTime   String   // e.g. "16:00"
+  isOffDay  Boolean  @default(false)
+  
+  @@unique([doctorId, date])
+}
+
+model AppointmentMessage {
+  id            String      @id @default(cuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  senderId      String
+  sender        User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content       String
+  createdAt     DateTime    @default(now())
+}
+
+model InAppNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,158 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profileSection {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.profileHeader {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.doctorName {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.specialtyBadge {
+  display: inline-block;
+  background-color: rgba(0, 91, 150, 0.1);
+  color: var(--primary);
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.bio {
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.iconWrapper {
+  color: var(--primary);
+  margin-top: 2px;
+}
+
+.infoText h4 {
+  font-size: 0.875rem;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+}
+
+.infoText p {
+  font-weight: 500;
+}
+
+/* Booking Form Styles */
+.bookingSection {
+  position: sticky;
+  top: 100px;
+}
+
+.bookingForm {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 91, 150, 0.1);
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.timeSlot {
+  padding: 0.5rem;
+  border: 1px solid var(--text-light);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.timeSlot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.timeSlotSelected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.timeSlotSelected:hover {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .profileHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding: 1rem;
+  }
+  .profileSection, .bookingForm {
+    padding: 1.5rem;
+  }
+}
