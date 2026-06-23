@@ -98,7 +98,10 @@ export async function bookAppointment(formData: FormData) {
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
     
     // In production, we'd use the actual base URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL 
+      || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null) 
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+      || 'http://localhost:3000'
     
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
