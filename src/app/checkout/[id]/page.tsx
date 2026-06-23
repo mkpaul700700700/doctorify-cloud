@@ -15,7 +15,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
   
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
-    include: { doctor: { include: { user: true } } }
+    include: { doctor: true }
   })
 
   if (!appointment) redirect("/dashboard")
