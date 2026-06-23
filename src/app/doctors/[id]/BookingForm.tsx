@@ -69,7 +69,8 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
     }
   }
 
-  const today = new Date().toISOString().split('T')[0]
+  const nowForDate = new Date()
+  const localToday = new Date(nowForDate.getTime() - (nowForDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
 
   return (
     <form className={styles.bookingForm} onSubmit={handleSubmit}>
@@ -86,7 +87,7 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
           className="input-field" 
           value={date}
           onChange={e => setDate(e.target.value)}
-          min={today}
+          min={localToday}
         />
       </div>
 
@@ -112,6 +113,27 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
             {slots.map(slot => {
               const [h, m] = slot.time.split(":")
               const hourNum = parseInt(h)
+              const minuteNum = parseInt(m)
+              
+              // Client-side past time check
+              const now = new Date()
+              let isPastLocally = false
+              
+              if (date === localToday) {
+                const currentHour = now.getHours()
+                const currentMinute = now.getMinutes()
+                
+                // A slot is considered passed locally if current time is past its 15-min end time
+                const slotEndTotalMins = hourNum * 60 + minuteNum + 15
+                const currentTotalMins = currentHour * 60 + currentMinute
+                
+                if (currentTotalMins >= slotEndTotalMins) {
+                  isPastLocally = true
+                }
+              }
+
+              const isAvailable = slot.available && !isPastLocally
+
               const ampm = hourNum >= 12 ? 'PM' : 'AM'
               const displayH = hourNum % 12 || 12
               const isSelected = selectedTime === slot.time
@@ -120,22 +142,22 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
                 <button
                   key={slot.time}
                   type="button"
-                  disabled={!slot.available}
+                  disabled={!isAvailable}
                   onClick={() => setSelectedTime(slot.time)}
                   style={{
                     padding: "0.6rem 0.25rem",
                     borderRadius: "6px",
                     border: isSelected ? "2px solid #0284c7" : "1px solid var(--border-color)",
-                    backgroundColor: slot.available 
+                    backgroundColor: isAvailable 
                       ? (isSelected ? "#e0f2fe" : "#dcfce7") 
                       : "#fee2e2", 
-                    color: slot.available ? (isSelected ? "#0369a1" : "#166534") : "#991b1b",
-                    cursor: slot.available ? "pointer" : "not-allowed",
+                    color: isAvailable ? (isSelected ? "#0369a1" : "#166534") : "#991b1b",
+                    cursor: isAvailable ? "pointer" : "not-allowed",
                     fontSize: "0.85rem",
                     fontWeight: isSelected ? "700" : "500",
                     transition: "all 0.2s",
-                    textDecoration: !slot.available ? "line-through" : "none",
-                    opacity: !slot.available ? 0.7 : 1
+                    textDecoration: !isAvailable ? "line-through" : "none",
+                    opacity: !isAvailable ? 0.7 : 1
                   }}
                 >
                   {displayH}:{m} {ampm}
