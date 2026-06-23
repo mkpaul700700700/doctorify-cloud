@@ -27,12 +27,6 @@ export default async function LoginPage() {
           <p className="text-muted" style={{ fontSize: "0.875rem" }}>
             Don't have an account? <a href="/register" style={{ color: "var(--primary)", fontWeight: 600 }}>Create one</a>
           </p>
-          <hr style={{ margin: "1rem 0", borderColor: "rgba(0,0,0,0.05)" }} />
-          <p className="text-muted" style={{ fontSize: "0.875rem" }}>
-            Use the seeded accounts to test:<br />
-            <strong>admin@doctorify.com</strong> | password123<br />
-            <strong>john@example.com</strong> (Patient) | password123
-          </p>
         </div>
       </div>
     </main>
