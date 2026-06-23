@@ -64,7 +64,7 @@ export default async function VerifyPrescriptionPage({ params }: { params: Promi
                 <Calendar size={16} /> {new Date(prescription.createdAt).toLocaleDateString()}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                <Clock size={16} /> {new Date(prescription.createdAt).toLocaleTimeString()}
+                <Clock size={16} /> {new Date(prescription.createdAt).toLocaleTimeString('en-US', { timeZone: 'Asia/Dhaka', hour: 'numeric', minute: '2-digit', hour12: true })}
               </div>
             </div>
 

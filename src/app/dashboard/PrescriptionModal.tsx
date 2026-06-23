@@ -85,7 +85,7 @@ export default function PrescriptionModal({
         margin:       10,
         filename:     `Prescription_${existingPrescription.id.slice(-6).toUpperCase()}.pdf`,
         image:        { type: "jpeg" as const, quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
       }
       
@@ -317,7 +317,7 @@ export default function PrescriptionModal({
 
                   <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end" }}>
                     {doctorSignatureUrl ? (
-                      <img src={doctorSignatureUrl} alt="Signature" style={{ height: "40px", objectFit: "contain", marginBottom: "0.25rem" }} />
+                      <img src={doctorSignatureUrl} crossOrigin="anonymous" alt="Signature" style={{ height: "40px", objectFit: "contain", marginBottom: "0.25rem" }} />
                     ) : (
                       <div style={{ height: "40px" }}></div>
                     )}
