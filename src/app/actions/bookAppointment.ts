@@ -6,11 +6,12 @@ import { revalidatePath } from "next/cache"
 import { sendNotificationEmail } from "@/lib/email"
 
 export async function bookAppointment(formData: FormData) {
-  const session = await auth()
-  
-  if (!session?.user?.id) {
-    throw new Error("You must be logged in to book an appointment")
-  }
+  try {
+    const session = await auth()
+    
+    if (!session?.user?.id) {
+      throw new Error("You must be logged in to book an appointment")
+    }
 
   const doctorId = formData.get("doctorId") as string
   const dateStr = formData.get("date") as string
@@ -45,7 +46,7 @@ export async function bookAppointment(formData: FormData) {
 
   if (!doctorProfile) throw new Error("Doctor not found")
   
-  const fee = doctorProfile.consultationFee > 0 ? doctorProfile.consultationFee : 500 // fallback to 500 BDT if zero
+  const fee = doctorProfile.consultationFee > 0 ? doctorProfile.consultationFee : 15 // fallback to 15 USD if zero
 
   const checkoutUrl = await prisma.$transaction(async (tx) => {
     // 1. Lock the appointment slot logic by checking existing non-cancelled appointments
@@ -108,7 +109,7 @@ export async function bookAppointment(formData: FormData) {
       line_items: [
         {
           price_data: {
-            currency: 'bdt',
+            currency: 'usd',
             product_data: {
               name: `Consultation with Dr. ${doctorProfile.user.name}`,
               description: `Date: ${dateStr} at ${time}`,
@@ -142,7 +143,8 @@ export async function bookAppointment(formData: FormData) {
     timeout: 10000
   })
 
-  // Redirect handles the browser navigation and throws a NEXT_REDIRECT error internally
-  const { redirect } = await import("next/navigation")
-  redirect(checkoutUrl)
+    return { url: checkoutUrl }
+  } catch (err: any) {
+    return { error: err.message || "Failed to book appointment" }
+  }
 }

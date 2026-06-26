@@ -62,7 +62,16 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
     formData.append("reason", reason)
 
     try {
-      await bookAppointment(formData)
+      const result = await bookAppointment(formData)
+      if (result?.error) {
+        setError(result.error)
+        setIsSubmitting(false)
+        return
+      }
+      if (result?.url) {
+        window.location.href = result.url
+        return
+      }
     } catch (err: any) {
       setError(err.message || "Failed to book appointment")
       setIsSubmitting(false)

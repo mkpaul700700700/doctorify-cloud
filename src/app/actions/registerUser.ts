@@ -54,7 +54,7 @@ export async function registerUser(formData: FormData) {
         specialty,
         qualifications,
         experience: 0,
-        consultationFee: 500,
+        consultationFee: 15,
         isVerified: false
       }
     })
