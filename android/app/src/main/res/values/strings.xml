@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">doctorify</string>
+    <string name="title_activity_main">doctorify</string>
+    <string name="package_name">com.doctorify.app</string>
+    <string name="custom_url_scheme">com.doctorify.app</string>
+</resources>
