@@ -175,6 +175,7 @@ export default function PrescriptionModal({
       await createPrescription(formData)
       setIsEditing(false)
       setIsOpen(false)
+      window.location.reload()
     } catch (err) {
       alert("Failed to save prescription")
     } finally {

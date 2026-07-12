@@ -138,8 +138,21 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
     })
   }
 
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" });
+  const nowDhaka = new Date(nowStr);
+
+  const isPastAppointment = (app: any) => {
+    if (app.status === "COMPLETED" || app.status === "CANCELLED" || app.status === "CANCELLED_EMERGENCY") return true;
+    
+    const [year, month, day] = app.date.toISOString().split("T")[0].split("-").map(Number);
+    const [hours, minutes] = app.time.split(':').map(Number);
+    const appEndTime = new Date(year, month - 1, day, hours, minutes + 15, 0);
+    
+    return nowDhaka > appEndTime;
+  };
+
   const upcoming = appointments
-    .filter(a => new Date(a.date) >= new Date(new Date().setHours(0,0,0,0)) && a.status !== "CANCELLED" && a.status !== "COMPLETED")
+    .filter(a => !isPastAppointment(a))
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -148,7 +161,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
     })
 
   const past = appointments
-    .filter(a => new Date(a.date) < new Date(new Date().setHours(0,0,0,0)) || a.status === "COMPLETED" || a.status === "CANCELLED")
+    .filter(a => isPastAppointment(a))
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -453,6 +466,17 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
                         appointmentId={app.id} 
                         dateStr={app.date.toISOString()} 
                         timeStr={app.time} 
+                      />
+                    )}
+
+                    {/* Prescription UI (for Doctors, anytime during the day) */}
+                    {role === "DOCTOR" && (
+                      <PrescriptionModal 
+                        appointmentId={app.id} 
+                        role={role} 
+                        existingPrescription={app.prescription} 
+                        doctorSignatureUrl={fullUser.doctorProfile?.signatureUrl}
+                        compact={true}
                       />
                     )}
 
