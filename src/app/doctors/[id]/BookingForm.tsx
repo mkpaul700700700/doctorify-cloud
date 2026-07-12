@@ -203,7 +203,6 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
         <label className="input-label" htmlFor="reason">Reason for Visit</label>
         <textarea 
           id="reason" 
-          required 
           className="input-field" 
           style={{ minHeight: "100px", resize: "vertical" }}
           placeholder="Please describe your symptoms..."
@@ -216,7 +215,7 @@ export default function BookingForm({ doctorId, isLoggedIn }: { doctorId: string
         type="submit" 
         className="btn btn-primary" 
         style={{ width: "100%" }}
-        disabled={!date || !selectedTime || !reason || isSubmitting}
+        disabled={!date || !selectedTime || isSubmitting}
       >
         {isSubmitting ? "Processing Transaction..." : "Confirm Booking"}
       </button>
