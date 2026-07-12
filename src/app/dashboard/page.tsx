@@ -142,6 +142,11 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
   const nowDhaka = new Date(nowStr);
 
   const isPastAppointment = (app: any) => {
+    // Expired unpaid bookings should be excluded entirely (not shown in upcoming OR past)
+    if (app.status === "AWAITING_PAYMENT") {
+      const isLockExpired = !app.lockedUntil || new Date(app.lockedUntil) <= new Date();
+      if (isLockExpired) return null; // special marker: exclude completely
+    }
     if (app.status === "COMPLETED" || app.status === "CANCELLED" || app.status === "CANCELLED_EMERGENCY") return true;
     
     const [year, month, day] = app.date.toISOString().split("T")[0].split("-").map(Number);
@@ -152,7 +157,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
   };
 
   const upcoming = appointments
-    .filter(a => !isPastAppointment(a))
+    .filter(a => isPastAppointment(a) === false)
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -161,7 +166,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
     })
 
   const past = appointments
-    .filter(a => isPastAppointment(a))
+    .filter(a => isPastAppointment(a) === true)
     .sort((a, b) => {
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
@@ -329,20 +334,24 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
         </div>
 
         <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
+          <a href="#upcoming-section" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer' }}>
             <div className={styles.statIcon}><Calendar size={28} /></div>
             <div>
               <div className={styles.statValue}>{upcoming.length}</div>
               <div className={styles.statLabel}>Upcoming Appointments</div>
             </div>
           </div>
-          <div className={styles.statCard}>
+          </a>
+          <a href="#past-section" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className={styles.statCard} style={{ cursor: 'pointer' }}>
             <div className={styles.statIcon}><Activity size={28} /></div>
             <div>
               <div className={styles.statValue}>{past.length}</div>
               <div className={styles.statLabel}>Past Consultations</div>
             </div>
           </div>
+          </a>
         </div>
 
         {/* MEDICAL PROFILE SECTION FOR PATIENTS */}
@@ -361,7 +370,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
         {role === "DOCTOR" && isVerifiedDoctor && (
           <div className={styles.section} style={{ marginTop: "2rem" }}>
             <div className={styles.sectionHeader} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <UserCog size={20} color="var(--primary)" /> Profile & Signature
+              <UserCog size={20} color="var(--primary)" /> Signature
             </div>
             <div style={{ padding: "1.5rem" }}>
               <ImageUpload 
@@ -405,7 +414,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
           </div>
         )}
 
-        <div className={styles.section} style={{ marginTop: "2rem" }}>
+        <div id="upcoming-section" className={styles.section} style={{ marginTop: "2rem" }}>
           <div className={styles.sectionHeader}>Upcoming Appointments</div>
           
           {upcoming.length > 0 ? (
@@ -493,7 +502,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
         </div>
 
         <div className={styles.section}>
-          <div className={styles.sectionHeader}>Past Consultations</div>
+          <div id="past-section" className={styles.sectionHeader}>Past Consultations</div>
           
           {past.length > 0 ? (
             <ul className={styles.appointmentList}>
