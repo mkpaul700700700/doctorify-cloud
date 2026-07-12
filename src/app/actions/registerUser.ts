@@ -12,13 +12,14 @@ export async function registerUser(formData: FormData) {
   const role = formData.get("role") as string || "PATIENT"
   const specialty = formData.get("specialty") as string
   const qualifications = formData.get("qualifications") as string
+  const experienceStr = formData.get("experience") as string
 
   if (!name || !email || !password) {
     throw new Error("Missing required fields")
   }
 
-  if (role === "DOCTOR" && (!specialty || !qualifications)) {
-    throw new Error("Doctor specialty and qualifications are required")
+  if (role === "DOCTOR" && (!specialty || !qualifications || !experienceStr)) {
+    throw new Error("Doctor specialty, qualifications, and experience are required")
   }
 
   const existingUser = await prisma.user.findUnique({
@@ -53,7 +54,7 @@ export async function registerUser(formData: FormData) {
         userId: user.id,
         specialty,
         qualifications,
-        experience: 0,
+        experience: experienceStr ? parseInt(experienceStr, 10) : 0,
         consultationFee: 15,
         isVerified: false
       }

@@ -111,6 +111,19 @@ export default function RegisterForm() {
                 placeholder="e.g. MBBS, MD, FCPS" 
               />
             </div>
+            <div className="input-group">
+              <label className="input-label" htmlFor="experience">Years of Experience <span style={{color:"red"}}>*</span></label>
+              <input 
+                id="experience" 
+                name="experience" 
+                type="number" 
+                required 
+                min="0"
+                max="60"
+                className="input-field" 
+                placeholder="e.g. 10" 
+              />
+            </div>
           </div>
         )}
 

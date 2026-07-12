@@ -1,10 +1,26 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
-import { MapPin, Clock, DollarSign, Stethoscope, Briefcase, Award } from "lucide-react"
+import { MapPin, Clock, DollarSign, Stethoscope, Briefcase } from "lucide-react"
 import styles from "./page.module.css"
 import BookingForm from "./BookingForm"
 import { auth } from "@/auth"
 import Link from "next/link"
+
+function formatWorkingHours(hoursStr: string | undefined | null) {
+  if (!hoursStr) return "Not specified";
+  const parts = hoursStr.split('-');
+  if (parts.length !== 2) return hoursStr;
+  const formatTime = (time: string) => {
+    const [h, m] = time.trim().split(':');
+    if (!h || !m) return time;
+    let hour = parseInt(h, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${m} ${ampm}`;
+  };
+  return `${formatTime(parts[0])} to ${formatTime(parts[1])}`;
+}
 
 export default async function DoctorProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -56,7 +72,7 @@ export default async function DoctorProfilePage({ params }: { params: Promise<{ 
 
           <h3 className={styles.sectionTitle}>About {doctor.name}</h3>
           <p className={styles.bio}>
-            {profile.bio || "No biography provided."}
+            {profile.qualifications || "No qualifications provided."}
           </p>
 
           <h3 className={styles.sectionTitle}>Clinic Information</h3>
@@ -73,7 +89,7 @@ export default async function DoctorProfilePage({ params }: { params: Promise<{ 
               <div className={styles.iconWrapper}><Clock size={20} /></div>
               <div className={styles.infoText}>
                 <h4>Working Hours</h4>
-                <p>{profile.workingHours}<br/><span style={{fontSize: "0.8rem", color: "var(--text-muted)"}}>{profile.availableDays}</span></p>
+                <p>{formatWorkingHours(profile.workingHours)}<br/><span style={{fontSize: "0.8rem", color: "var(--text-muted)"}}>{profile.availableDays}</span></p>
               </div>
             </div>
 
