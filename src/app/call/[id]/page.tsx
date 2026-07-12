@@ -65,9 +65,11 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
       </div>
       
       {/* Persistent Chat Area */}
+      {false && appointment && (
       <div className="chat-panel-container">
-        <ChatPanel appointmentId={appointment.id} currentUserId={userId} role={role} />
+        <ChatPanel appointmentId={appointment!.id} currentUserId={userId} role={role} />
       </div>
+      )}
     </div>
   );
 }

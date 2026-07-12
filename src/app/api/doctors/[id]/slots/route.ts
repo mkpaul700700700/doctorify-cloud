@@ -31,9 +31,29 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       const regularSchedule = await prisma.doctorSchedule.findUnique({
         where: { doctorId_dayOfWeek: { doctorId, dayOfWeek } }
       })
-      if (!regularSchedule || regularSchedule.isOffDay) return NextResponse.json({ slots: [] })
-      startTimeStr = regularSchedule.startTime
-      endTimeStr = regularSchedule.endTime
+      if (regularSchedule) {
+        if (regularSchedule.isOffDay) return NextResponse.json({ slots: [] })
+        startTimeStr = regularSchedule.startTime
+        endTimeStr = regularSchedule.endTime
+      } else {
+        // Fallback to doctor's default profile settings if no schedule record exists
+        const doctorProfile = await prisma.doctorProfile.findUnique({
+          where: { userId: doctorId }
+        })
+        if (!doctorProfile) return NextResponse.json({ slots: [] })
+        
+        const daysMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const dayName = daysMap[dayOfWeek];
+        if (!doctorProfile.availableDays.includes(dayName)) {
+            return NextResponse.json({ slots: [] })
+        }
+        
+        const [start, end] = doctorProfile.workingHours.split("-");
+        if (!start || !end) return NextResponse.json({ slots: [] })
+        
+        startTimeStr = start;
+        endTimeStr = end;
+      }
     }
 
     // Generate 15-min intervals
