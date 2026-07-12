@@ -32,16 +32,17 @@ export default function LoginForm() {
 
       if (res?.error) {
         setError("Invalid email or password")
+        setIsLoading(false)
       } else {
         // Clear temp credentials upon successful login
         sessionStorage.removeItem("tempEmail")
         sessionStorage.removeItem("tempPassword")
         router.push("/dashboard")
         router.refresh()
+        // Intentionally keep isLoading true during navigation
       }
     } catch (err) {
       setError("An unexpected error occurred")
-    } finally {
       setIsLoading(false)
     }
   }
