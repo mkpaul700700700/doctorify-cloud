@@ -18,7 +18,7 @@ export async function bookAppointment(formData: FormData) {
   const time = formData.get("time") as string
   const reason = formData.get("reason") as string
 
-  if (!doctorId || !dateStr || !time || !reason) {
+  if (!doctorId || !dateStr || !time) {
     throw new Error("Missing required fields")
   }
 
