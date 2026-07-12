@@ -66,6 +66,27 @@ export default function PatientAppointmentActions({ appointment }: { appointment
     )
   }
 
+  // Awaiting Payment Logic (Resume Stripe Checkout)
+  if (appointment.status === "AWAITING_PAYMENT") {
+    return (
+      <button 
+        onClick={async () => {
+          try {
+            const { getPaymentUrl } = await import("@/app/actions/getPaymentUrl");
+            const url = await getPaymentUrl(appointment.id);
+            if (url) window.location.href = url;
+          } catch (err: any) {
+            alert("Failed to load payment page: " + err.message);
+          }
+        }}
+        className="btn btn-primary" 
+        style={{ padding: "0.3rem 0.6rem", fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.25rem" }}
+      >
+        Pay Now (Closes Soon)
+      </button>
+    )
+  }
+
   // Normal Reschedule Logic
   if ((appointment.status === "PENDING" || appointment.status === "CONFIRMED") && appointment.rescheduleCount === 0) {
     return (
