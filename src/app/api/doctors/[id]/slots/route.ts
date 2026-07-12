@@ -12,7 +12,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!dateStr) return NextResponse.json({ error: "Date required" }, { status: 400 })
 
     const date = new Date(dateStr)
-    const dayOfWeek = date.getUTCDay()
+    
+    // Parse the date as LOCAL date (not UTC midnight) to get the correct day of week.
+    // "new Date('2026-07-12')" gives UTC midnight which shifts the day in UTC+6 timezone.
+    const [year, month, day] = dateStr.split("-").map(Number)
+    const localDate = new Date(year, month - 1, day) // local midnight
+    const dayOfWeek = localDate.getDay()
 
     // 1. Check Special Schedule
     const specialSchedule = await prisma.specialSchedule.findUnique({
