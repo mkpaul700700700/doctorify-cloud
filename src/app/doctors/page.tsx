@@ -5,6 +5,23 @@ import styles from "./page.module.css"
 
 export const dynamic = 'force-dynamic'
 
+function formatWorkingHours(hoursStr: string | undefined | null) {
+  if (!hoursStr) return "Not specified";
+  const parts = hoursStr.split('-');
+  if (parts.length !== 2) return hoursStr;
+  
+  const formatTime = (time: string) => {
+    const [h, m] = time.split(':');
+    if (!h || !m) return time;
+    let hour = parseInt(h, 10);
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${m}`;
+  };
+
+  return `${formatTime(parts[0])} to ${formatTime(parts[1])}`;
+}
+
 export default async function DoctorsPage({
   searchParams,
 }: {
@@ -87,7 +104,7 @@ export default async function DoctorsPage({
                   <MapPin size={16} /> <span>{doctor.doctorProfile?.clinicAddress}</span>
                 </div>
                 <div className={styles.infoRow}>
-                  <Clock size={16} /> <span>{doctor.doctorProfile?.workingHours}</span>
+                  <Clock size={16} /> <span>{formatWorkingHours(doctor.doctorProfile?.workingHours)}</span>
                 </div>
                 <div className={styles.infoRow}>
                   <DollarSign size={16} /> <span>${doctor.doctorProfile?.consultationFee} per visit</span>
