@@ -128,7 +128,6 @@ export async function bookAppointment(formData: FormData) {
         doctorId,
         patientId: session.user.id
       },
-      currency_conversion: { enabled: false },
       expires_at: Math.floor(Date.now() / 1000) + (30 * 60) // Stripe minimum is 30 mins
     })
 
