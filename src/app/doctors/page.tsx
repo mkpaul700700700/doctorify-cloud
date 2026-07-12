@@ -80,8 +80,8 @@ export default async function DoctorsPage({
               </div>
               
               <div className={styles.cardBody}>
-                <p style={{ color: "var(--text)", marginBottom: "1rem", fontSize: "0.95rem" }}>
-                  {doctor.doctorProfile?.bio?.substring(0, 100)}...
+                <p style={{ color: "var(--text)", marginBottom: "1rem", fontSize: "0.95rem", fontWeight: 500 }}>
+                  {doctor.doctorProfile?.qualifications || "MBBS"}
                 </p>
                 <div className={styles.infoRow}>
                   <MapPin size={16} /> <span>{doctor.doctorProfile?.clinicAddress}</span>
