@@ -154,6 +154,7 @@ export default function ScheduleManager({ regularSchedules, specialSchedules }: 
       </div>
 
       {/* Emergency Unavailability */}
+      {false && (
       <div style={{ backgroundColor: "#fef2f2", padding: "1.5rem", borderRadius: "8px", border: "1px solid #fca5a5" }}>
         <h3 style={{ fontSize: "1.2rem", fontWeight: 600, marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "#b91c1c" }}>
           <AlertTriangle size={20} /> Declare Emergency Unavailability
@@ -173,6 +174,7 @@ export default function ScheduleManager({ regularSchedules, specialSchedules }: 
           </button>
         </form>
       </div>
+      )}
 
     </div>
   )

@@ -77,7 +77,7 @@ export default function ChatPanel({ appointmentId, currentUserId, role, readOnly
     <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "var(--background)", borderLeft: "1px solid var(--border-color)" }}>
       <div style={{ padding: "1rem", borderBottom: "1px solid var(--border-color)", fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span>{readOnly ? "Consultation Chat History" : "Consultation Chat"}</span>
-        {!readOnly && role === "DOCTOR" && (
+        {false && !readOnly && role === "DOCTOR" && (
           <button 
             onClick={handleExtend}
             disabled={isExtending}

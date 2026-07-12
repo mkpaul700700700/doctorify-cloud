@@ -118,7 +118,7 @@ export default function PatientHistorySidebar({
                   <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.75rem" }}>{app.doctorSpecialty}</div>
                   
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem", paddingTop: "0.75rem", borderTop: "1px solid #f1f5f9" }}>
-                    <ChatHistoryModal appointmentId={app.id} currentUserId={patientId} role={role} compact={true} />
+                    {false && <ChatHistoryModal appointmentId={app.id} currentUserId={patientId} role={role} compact={true} />}
                     {app.prescription ? (
                       <PrescriptionModal appointmentId={app.id} role={role} existingPrescription={app.prescription} compact={true} doctorSignatureUrl={doctorSignatureUrl} />
                     ) : null}

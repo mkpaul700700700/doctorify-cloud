@@ -523,7 +523,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ pay
                     </span>
                     
                     {/* Chat History UI */}
-                    <ChatHistoryModal appointmentId={app.id} currentUserId={id} role={role} />
+                    {false && <ChatHistoryModal appointmentId={app.id} currentUserId={id} role={role} />}
 
                     {/* Prescription UI */}
                     {(app.status === "COMPLETED" || role === "DOCTOR") && (
