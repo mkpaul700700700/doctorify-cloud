@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { createPrescription } from "@/app/actions/createPrescription"
 import { scrapeMedicineAction } from "@/app/actions/scrapeMedicineAction"
 import styles from "./page.module.css"
@@ -29,6 +30,7 @@ export default function PrescriptionModal({
   compact?: boolean,
   doctorSignatureUrl?: string | null
 }) {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   
@@ -175,7 +177,7 @@ export default function PrescriptionModal({
       await createPrescription(formData)
       setIsEditing(false)
       setIsOpen(false)
-      window.location.reload()
+      router.push('/dashboard')
     } catch (err) {
       alert("Failed to save prescription")
     } finally {
