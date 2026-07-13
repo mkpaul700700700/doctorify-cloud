@@ -409,13 +409,13 @@ export default function PrescriptionModal({
                         <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{itemType === "Medicine" ? "Medicine Name" : "Test Name"}</label>
                         <input type="text" className="input-field" placeholder={itemType === "Medicine" ? "e.g. Napa 500mg" : "e.g. CBC"} value={medName} onChange={(e) => setMedName(e.target.value)} />
                       </div>
-                      <div>
+                      <div style={{ minWidth: 0 }}>
                         <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Dosage</label>
-                        <input type="text" className="input-field" placeholder="1-0-1" value={dosage} onChange={(e) => setDosage(e.target.value)} disabled={itemType === "Test"} />
+                        <input type="text" className="input-field" placeholder="1-0-1" value={dosage} onChange={(e) => setDosage(e.target.value)} disabled={itemType === "Test"} style={{ width: "100%", minWidth: 0 }} />
                       </div>
-                      <div>
+                      <div style={{ minWidth: 0 }}>
                         <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Days</label>
-                        <input type="number" className="input-field" placeholder="5" value={days} onChange={(e) => setDays(e.target.value)} min="1" disabled={itemType === "Test"} />
+                        <input type="number" className="input-field" placeholder="5" value={days} onChange={(e) => setDays(e.target.value)} min="1" disabled={itemType === "Test"} style={{ width: "100%", minWidth: 0 }} />
                       </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
