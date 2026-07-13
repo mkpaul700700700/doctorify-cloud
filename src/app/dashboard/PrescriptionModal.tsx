@@ -397,7 +397,7 @@ export default function PrescriptionModal({
 
                   {/* Add Item Builder */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr", gap: "0.5rem" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 0.65fr 0.45fr", gap: "0.5rem" }}>
                       <div>
                         <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Type</label>
                         <select className="input-field" value={itemType} onChange={(e) => setItemType(e.target.value)}>
@@ -419,7 +419,29 @@ export default function PrescriptionModal({
                       </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                      <button type="button" className="btn btn-secondary" style={{ padding: "0.6rem 1.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }} onClick={handleAddItem} disabled={!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping}>
+                      <button 
+                        type="button"
+                        onClick={handleAddItem}
+                        disabled={!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping}
+                        style={{
+                          padding: "0.6rem 1.5rem",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.4rem",
+                          border: "none",
+                          borderRadius: "var(--radius-md, 8px)",
+                          cursor: (!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping) ? "not-allowed" : "pointer",
+                          fontWeight: 600,
+                          fontSize: "0.9rem",
+                          transition: "background 0.2s, color 0.2s",
+                          background: (!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping)
+                            ? "#b0bec5"
+                            : "#29b6f6",
+                          color: (!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping)
+                            ? "#78909c"
+                            : "#fff",
+                        }}
+                      >
                         {isScraping ? <Loader2 size={18} className="spin" /> : <><Plus size={18} /> Add</>}
                       </button>
                     </div>
