@@ -396,30 +396,35 @@ export default function PrescriptionModal({
                   )}
 
                   {/* Add Item Builder */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr auto", gap: "0.5rem", alignItems: "end" }}>
-                    <div>
-                      <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Type</label>
-                      <select className="input-field" value={itemType} onChange={(e) => setItemType(e.target.value)}>
-                        <option value="Medicine">Medicine</option>
-                        <option value="Test">Medical Test</option>
-                      </select>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr", gap: "0.5rem" }}>
+                      <div>
+                        <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Type</label>
+                        <select className="input-field" value={itemType} onChange={(e) => setItemType(e.target.value)}>
+                          <option value="Medicine">Medicine</option>
+                          <option value="Test">Medical Test</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{itemType === "Medicine" ? "Medicine Name" : "Test Name"}</label>
+                        <input type="text" className="input-field" placeholder={itemType === "Medicine" ? "e.g. Napa 500mg" : "e.g. CBC"} value={medName} onChange={(e) => setMedName(e.target.value)} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Dosage</label>
+                        <input type="text" className="input-field" placeholder="1-0-1" value={dosage} onChange={(e) => setDosage(e.target.value)} disabled={itemType === "Test"} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Days</label>
+                        <input type="number" className="input-field" placeholder="5" value={days} onChange={(e) => setDays(e.target.value)} min="1" disabled={itemType === "Test"} />
+                      </div>
                     </div>
-                    <div>
-                      <label style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{itemType === "Medicine" ? "Medicine Name" : "Test Name"}</label>
-                      <input type="text" className="input-field" placeholder={itemType === "Medicine" ? "e.g. Napa 500mg" : "e.g. CBC"} value={medName} onChange={(e) => setMedName(e.target.value)} />
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <button type="button" className="btn btn-secondary" style={{ padding: "0.6rem 1.5rem", display: "flex", alignItems: "center", gap: "0.4rem" }} onClick={handleAddItem} disabled={!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping}>
+                        {isScraping ? <Loader2 size={18} className="spin" /> : <><Plus size={18} /> Add</>}
+                      </button>
                     </div>
-                    <div>
-                      <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Dosage</label>
-                      <input type="text" className="input-field" placeholder="1-0-1" value={dosage} onChange={(e) => setDosage(e.target.value)} disabled={itemType === "Test"} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: "0.75rem", color: "var(--text-muted)", opacity: itemType === "Test" ? 0.3 : 1 }}>Days</label>
-                      <input type="number" className="input-field" placeholder="5" value={days} onChange={(e) => setDays(e.target.value)} min="1" disabled={itemType === "Test"} />
-                    </div>
-                    <button type="button" className="btn btn-secondary" style={{ padding: "0.6rem 1rem" }} onClick={handleAddItem} disabled={!medName || (itemType === "Medicine" && (!dosage || !days)) || isScraping}>
-                      {isScraping ? <Loader2 size={18} className="spin" /> : <Plus size={18} />}
-                    </button>
                   </div>
+
                   {isScraping && <div style={{ fontSize: "0.75rem", color: "var(--primary)", marginTop: "0.5rem" }}>Scraping live price from BD indices...</div>}
                 </div>
 
