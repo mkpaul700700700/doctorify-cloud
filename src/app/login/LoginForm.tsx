@@ -4,10 +4,99 @@ import { useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
+const shimmer: React.CSSProperties = {
+  background: "linear-gradient(90deg, #e8edf2 25%, #f4f6f8 50%, #e8edf2 75%)",
+  backgroundSize: "200% 100%",
+  animation: "shimmer 1.4s infinite",
+}
+
+function DashboardSkeleton() {
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      backgroundColor: "var(--background, #f8fafc)",
+      display: "flex", flexDirection: "column",
+    }}>
+      {/* Fake navbar */}
+      <div style={{
+        height: 64, backgroundColor: "var(--surface, #fff)",
+        borderBottom: "1px solid rgba(0,0,0,0.07)",
+        display: "flex", alignItems: "center", padding: "0 2rem", gap: "1rem",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)"
+      }}>
+        <div style={{ ...shimmer, width: 120, height: 22, borderRadius: 6 }} />
+        <div style={{ flex: 1 }} />
+        <div style={{ ...shimmer, width: 36, height: 36, borderRadius: "50%" }} />
+      </div>
+
+      {/* Page body */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 2rem", width: "100%" }}>
+
+        {/* Header row: avatar + welcome text */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginBottom: "3rem", paddingBottom: "1.5rem", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
+          <div style={{ ...shimmer, width: 64, height: 64, borderRadius: "50%", flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ ...shimmer, width: "35%", height: 28, borderRadius: 6, marginBottom: 10 }} />
+            <div style={{ ...shimmer, width: "22%", height: 16, borderRadius: 4 }} />
+          </div>
+        </div>
+
+        {/* Stat cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px,1fr))", gap: "1.5rem", marginBottom: "3rem" }}>
+          {[1, 2].map(i => (
+            <div key={i} style={{
+              background: "var(--surface, #fff)", borderRadius: 12,
+              padding: "1.5rem", display: "flex", alignItems: "center", gap: "1.5rem",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)"
+            }}>
+              <div style={{ ...shimmer, width: 56, height: 56, borderRadius: "50%", flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ ...shimmer, width: "40%", height: 26, borderRadius: 6, marginBottom: 8 }} />
+                <div style={{ ...shimmer, width: "65%", height: 14, borderRadius: 4 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Appointment sections */}
+        {[1, 2].map(section => (
+          <div key={section} style={{
+            background: "var(--surface, #fff)", borderRadius: 12, marginBottom: "2rem",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.05)", overflow: "hidden"
+          }}>
+            <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(0,0,0,0.05)", background: "var(--surface-hover, #f8fafc)" }}>
+              <div style={{ ...shimmer, width: "28%", height: 16, borderRadius: 4 }} />
+            </div>
+            <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              {[1, 2].map(row => (
+                <div key={row} style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+                  <div style={{ ...shimmer, width: 52, height: 52, borderRadius: 8, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ ...shimmer, width: "50%", height: 16, borderRadius: 4, marginBottom: 8 }} />
+                    <div style={{ ...shimmer, width: "32%", height: 12, borderRadius: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <style>{`
+        @keyframes shimmer {
+          0%   { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export default function LoginForm() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [showSkeleton, setShowSkeleton] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
@@ -37,6 +126,8 @@ export default function LoginForm() {
         // Clear temp credentials upon successful login
         sessionStorage.removeItem("tempEmail")
         sessionStorage.removeItem("tempPassword")
+        // Show skeleton immediately before navigation starts
+        setShowSkeleton(true)
         router.push("/dashboard")
         router.refresh()
         // Intentionally keep isLoading true during navigation
@@ -45,6 +136,10 @@ export default function LoginForm() {
       setError("An unexpected error occurred")
       setIsLoading(false)
     }
+  }
+
+  if (showSkeleton) {
+    return <DashboardSkeleton />
   }
 
   return (
